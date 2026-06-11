@@ -9,7 +9,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        /* Deshabilitar flechas de incremento en inputs numéricos */
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { 
             -webkit-appearance: none; 
@@ -68,12 +67,14 @@
         </section>
 
         <section id="view-frutas" class="app-view hidden space-y-4">
-            <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 shadow-xl">
-                <button onclick="switchView('home')" class="text-[10px] text-slate-400 font-bold mb-4 flex items-center gap-1 hover:underline">⬅ Volver al Menú Principal</button>
-                <h2 class="text-lg font-extrabold text-indigo-400 mb-1 flex items-center gap-2">🍓 1. Área de Frutas</h2>
-                <p class="text-xs text-slate-400 mb-5">Control de tiempos, mermas y reanudación de lotes.</p>
+            <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 shadow-xl space-y-4">
+                <div>
+                    <button onclick="switchView('home')" class="text-[10px] text-slate-400 font-bold mb-4 flex items-center gap-1 hover:underline">⬅ Volver al Menú Principal</button>
+                    <h2 class="text-lg font-extrabold text-indigo-400 mb-1 flex items-center gap-2">🍓 1. Área de Frutas</h2>
+                    <p class="text-xs text-slate-400">Control de tiempos, mermas y reanudación de lotes.</p>
+                </div>
                 
-                <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700 flex gap-2 mb-4 text-xs">
+                <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700 flex gap-2 text-xs">
                     <button id="mode-new-btn" onclick="setFrutasMode(false)" class="flex-1 py-2 rounded-lg font-bold bg-indigo-600 text-white transition">🆕 Iniciar Pedido Nuevo</button>
                     <button id="mode-resume-btn" onclick="setFrutasMode(true)" class="flex-1 py-2 rounded-lg font-bold bg-slate-700 text-slate-300 transition">🔄 Retomar Lote Parcial</button>
                 </div>
@@ -83,6 +84,11 @@
                         <label class="block text-xs font-bold uppercase tracking-wider text-amber-400 mb-1">Seleccionar Pedido Parcial a Continuar:</label>
                         <select id="f-pedido-parcial-select" onchange="autoFillRetomado()" class="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-xl text-sm outline-none text-amber-200 font-medium">
                             </select>
+                        
+                        <div id="f-history-info-box" class="hidden grid grid-cols-2 gap-2 bg-slate-900/80 p-3 rounded-xl border border-slate-700 text-[11px] mt-2">
+                            <div>Entrada Inicial: <span id="lbl-hist-entrada" class="text-indigo-400 font-bold">0 Lbs</span></div>
+                            <div>Procesado Anterior: <span id="lbl-hist-salida" class="text-amber-400 font-bold">0 Lbs</span></div>
+                        </div>
                     </div>
 
                     <div id="f-grupo-manual-inputs" class="space-y-3">
@@ -121,7 +127,7 @@
                     </div>
 
                     <div id="f-wrapper-peso-dinamico">
-                        <label id="f-label-dinamico" class="block text-xs font-bold uppercase tracking-wider text-emerald-400 mb-1">Cantidad total que salió de manera final (Lbs):</label>
+                        <label id="f-label-dinamico" class="block text-xs font-bold uppercase tracking-wider text-emerald-400 mb-1">Cantidad de producto logrado HOY (Lbs):</label>
                         <input type="number" id="f-peso-dinamico-input" placeholder="0.00" inputmode="decimal" class="w-full px-4 py-3 bg-slate-900 border border-emerald-600 rounded-xl text-sm outline-none transition">
                     </div>
 
@@ -129,6 +135,15 @@
                         Guardar Registro de Frutas
                     </button>
                 </div>
+            </div>
+
+            <div id="g-box-catalogo" class="hidden bg-slate-800 p-5 rounded-2xl border border-amber-500/30 shadow-xl space-y-3">
+                <h3 class="text-xs font-black text-amber-400 uppercase tracking-widest">⚙️ Catálogo de Frutas (Modo Gerente)</h3>
+                <div class="flex gap-2">
+                    <input type="text" id="new-fruta-input" placeholder="Añadir nueva variedad" class="flex-1 px-4 py-2.5 bg-slate-900 border border-slate-600 rounded-xl text-xs outline-none">
+                    <button onclick="addFrutaCatalog()" class="bg-amber-500 text-slate-900 font-bold px-4 rounded-xl text-xs transition active:scale-95">Añadir</button>
+                </div>
+                <ul id="catalog-list" class="space-y-1.5 max-h-36 overflow-y-auto pr-1"></ul>
             </div>
         </section>
 
@@ -140,7 +155,7 @@
                 
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Seleccionar Pedido Procesado (Con Fecha de Proceso):</label>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Seleccionar Pedido Procesado:</label>
                         <select id="e-pedido-select" class="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-xl text-sm outline-none text-amber-200 font-medium">
                             </select>
                     </div>
@@ -152,7 +167,7 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Cantidad de Cajas empacadas de este pedido:</label>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Cantidad de Cajas empacadas:</label>
                         <input type="number" id="e-cajas" placeholder="0" inputmode="numeric" class="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-xl text-sm outline-none transition">
                     </div>
                     <button onclick="submitEmpaque()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-black py-4 rounded-xl text-sm uppercase tracking-wider transition active:scale-95 shadow-lg">
@@ -172,44 +187,26 @@
             <div id="cards-container" class="space-y-3">
                 <p class="text-xs text-slate-500 italic text-center py-6">Descargando historial...</p>
             </div>
-        </section>
 
-        <section id="view-gerente" class="hidden space-y-4">
-            <div class="bg-slate-800 p-5 rounded-2xl border border-amber-500/40 shadow-xl space-y-6">
+            <div id="g-box-gestion-ordenes" class="hidden bg-slate-800 p-5 rounded-2xl border border-rose-500/30 shadow-xl space-y-3 mt-6">
+                <h3 class="text-sm font-black text-rose-400 uppercase tracking-widest">🗑️ Gestión y Limpieza de Órdenes</h3>
+                <p class="text-[11px] text-slate-400">Panel administrativo para archivar de la pantalla móvil o borrar de raíz en la base de datos.</p>
                 
-                <div>
-                    <div class="flex justify-between items-center mb-3">
-                        <h3 class="text-sm font-black text-amber-400 uppercase tracking-widest">⚙️ Catálogo de Frutas (Administrador)</h3>
-                        <button onclick="lockAdmin()" class="text-xs text-rose-400 font-bold underline">Salir de Modo Gerente</button>
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Seleccionar Lote de la Planta:</label>
+                        <select id="g-lote-select" class="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-xl text-xs outline-none text-amber-200">
+                            </select>
                     </div>
-                    <div class="flex gap-2">
-                        <input type="text" id="new-fruta-input" placeholder="Nueva fruta" class="flex-1 px-4 py-2.5 bg-slate-900 border border-slate-600 rounded-xl text-xs outline-none">
-                        <button onclick="addFrutaCatalog()" class="bg-amber-500 text-slate-900 font-bold px-4 rounded-xl text-xs transition active:scale-95">Añadir</button>
-                    </div>
-                    <ul id="catalog-list" class="space-y-1.5 max-h-36 overflow-y-auto mt-3 pr-1"></ul>
-                </div>
-
-                <div class="border-t border-slate-700 pt-4">
-                    <h3 class="text-sm font-black text-rose-400 uppercase tracking-widest mb-2">🗑️ Gestión y Limpieza de Ordenes</h3>
-                    <p class="text-[11px] text-slate-400 mb-3">Utilice este panel para ocultar lotes del flujo móvil o eliminarlos de raíz.</p>
-                    
-                    <div class="space-y-3">
-                        <div>
-                            <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Seleccionar Lote de la Planta:</label>
-                            <select id="g-lote-select" class="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-xl text-xs outline-none text-amber-200">
-                                </select>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2 pt-1">
-                            <button onclick="gerenteOcultarLoteApp()" class="bg-slate-700 hover:bg-slate-600 text-white text-[11px] font-bold py-2.5 px-2 rounded-xl border border-slate-500 transition active:scale-95">
-                                Ocultar de la App
-                            </button>
-                            <button onclick="gerenteBorrarLoteTotal()" class="bg-rose-600 hover:bg-rose-500 text-white text-[11px] font-black py-2.5 px-2 rounded-xl transition active:scale-95 shadow-md uppercase">
-                                Borrar del Todo ✕
-                            </button>
-                        </div>
+                    <div class="grid grid-cols-2 gap-2 pt-1">
+                        <button onclick="gerenteOcultarLoteApp()" class="bg-slate-700 hover:bg-slate-600 text-white text-[11px] font-bold py-2.5 px-2 rounded-xl border border-slate-500 transition active:scale-95">
+                            Ocultar de la App
+                        </button>
+                        <button onclick="gerenteBorrarLoteTotal()" class="bg-rose-600 hover:bg-rose-500 text-white text-[11px] font-black py-2.5 px-2 rounded-xl transition active:scale-95 shadow-md uppercase">
+                            Borrar del Todo ✕
+                        </button>
                     </div>
                 </div>
-
             </div>
         </section>
 
@@ -228,6 +225,7 @@
     </nav>
 
     <script>
+        // Recuerda pegar aquí tu URL de Apps Script real
         const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbwoYXQgXwP5ida5biHtFZoeSzFeElLSWhNWQ3zGI3ebOcX2u3fhLALX-VnfCcc0LStc2Q/exec";
         const GERENTE_PASSWORD = "PRODUCCION2026";
 
@@ -264,7 +262,7 @@
                     renderEmpaqueSelect();
                     renderMobileHistory();
                     renderGerenteCatalog();
-                    renderGerenteLoteSelect(); // Actualiza selector administrador
+                    renderGerenteLoteSelect(); 
                     
                     document.getElementById('global-status').innerText = "✅ Sincronizado";
                     document.getElementById('global-status').className = "text-[10px] text-emerald-400 font-medium italic";
@@ -284,7 +282,6 @@
             document.getElementById(`view-${viewName}`).classList.remove('hidden');
         }
 
-        // --- PROTECCIÓN CRUCIAL: MANTENER INTACTOS VALORES DE INPUTS CONTRA CAMBIOS ---
         function setFrutasMode(mode) {
             isRetomadoMode = mode;
             const newBtn = document.getElementById('mode-new-btn');
@@ -292,64 +289,67 @@
             const manualInputs = document.getElementById('f-grupo-manual-inputs');
             const retomarContainer = document.getElementById('f-container-retomar');
             const labelPesoIn = document.getElementById('f-label-peso-in');
-            
-            // Almacenamos el peso que ya digitó para que no se altere
-            const currentPesoIn = document.getElementById('f-peso-in').value;
+            const inputPesoIn = document.getElementById('f-peso-in');
 
             if(mode) {
                 resumeBtn.className = "flex-1 py-2 rounded-lg font-bold bg-indigo-600 text-white transition";
                 newBtn.className = "flex-1 py-2 rounded-lg font-bold bg-slate-700 text-slate-300 transition";
                 manualInputs.classList.add('hidden');
                 retomarContainer.classList.remove('hidden');
-                labelPesoIn.innerText = "Añadir Peso de Entrada Extra para reanudar (Lbs):";
+                
+                labelPesoIn.innerText = "Peso Entrada Original (Lote Bloqueado):";
+                inputPesoIn.disabled = true; // No se puede alterar la entrada original
+                inputPesoIn.value = "";
             } else {
                 newBtn.className = "flex-1 py-2 rounded-lg font-bold bg-indigo-600 text-white transition";
                 resumeBtn.className = "flex-1 py-2 rounded-lg font-bold bg-slate-700 text-slate-300 transition";
                 manualInputs.classList.remove('hidden');
                 retomarContainer.classList.add('hidden');
+                document.getElementById('f-history-info-box').classList.add('hidden');
+                
                 labelPesoIn.innerText = "Peso Entrada (Lbs):";
+                inputPesoIn.disabled = false;
+                inputPesoIn.value = "";
+                document.getElementById('f-nombre').value = "";
             }
-            
-            // Devolvemos el valor exacto del operador sin mutaciones
-            document.getElementById('f-peso-in').value = currentPesoIn;
         }
 
         function autoFillRetomado() {
             const select = document.getElementById('f-pedido-parcial-select');
-            if(!select.value) return;
+            if(!select.value) {
+                document.getElementById('f-history-info-box').classList.add('hidden');
+                return;
+            }
             const lote = pedidosParciales.find(p => p.id === select.value);
-            
-            // Guardamos el peso de entrada antes del autollenado de textos
-            const userPesoIn = document.getElementById('f-peso-in').value;
             
             if(lote) {
                 document.getElementById('f-nombre').value = lote.nombre;
                 document.getElementById('f-fruta').value = lote.fruta;
+                document.getElementById('f-peso-in').value = lote.pesoEntrada;
+                
+                // Mostrar info histórica de apoyo visual
+                document.getElementById('lbl-hist-entrada').innerText = lote.pesoEntrada + " Lbs";
+                document.getElementById('lbl-hist-salida').innerText = (lote.pesoParcialFrutas || 0) + " Lbs";
+                document.getElementById('f-history-info-box').classList.remove('hidden');
             }
-            
-            // Devolvemos el valor intacto
-            document.getElementById('f-peso-in').value = userPesoIn;
         }
 
         function ajustarFormularioCierre() {
             const estado = document.getElementById('f-estado-cierre').value;
             const label = document.getElementById('f-label-dinamico');
             const input = document.getElementById('f-peso-dinamico-input');
-
-            // Salvaguarda absoluta de lo que digitó el operador
             const valorOriginalUsuario = input.value; 
 
             if(estado === "Proceso Parcial") {
-                label.innerText = "Cantidad parcial lograda procesar durante el día (Lbs):";
+                label.innerText = "Cantidad parcial lograda HOY en esta sesión (Lbs):";
                 label.className = "block text-xs font-bold uppercase tracking-wider text-amber-400 mb-1";
                 input.placeholder = "Ej: 150.00";
             } else {
-                label.innerText = "Cantidad total que salió de manera final (Lbs):";
+                label.innerText = "Cantidad final obtenida HOY para completar lote (Lbs):";
                 label.className = "block text-xs font-bold uppercase tracking-wider text-emerald-400 mb-1";
                 input.placeholder = "Ej: 450.00";
             }
 
-            // Inyección forzada del mismo valor original
             input.value = valorOriginalUsuario; 
         }
 
@@ -363,7 +363,7 @@
                 return;
             }
             if (!document.getElementById('f-peso-in').value || parseFloat(document.getElementById('f-peso-in').value) <= 0) {
-                alert("Debe escribir un número de peso de entrada válido para registrar.");
+                alert("Debe registrar un número de entrada válido.");
                 return;
             }
 
@@ -401,7 +401,7 @@
         function saveLoteFrutas() {
             const pesoDinamico = document.getElementById('f-peso-dinamico-input').value;
             if(!pesoDinamico || parseFloat(pesoDinamico) <= 0) { 
-                alert("Debe escribir un número válido en la casilla de salida para registrar el proceso."); 
+                alert("Debe escribir un número de báscula válido."); 
                 return; 
             }
 
@@ -415,9 +415,10 @@
                 nombrePedido: document.getElementById('f-nombre').value.trim(),
                 frutaTipo: document.getElementById('f-fruta').value,
                 pesoEntrada: document.getElementById('f-peso-in').value,
-                pesoSalida: estadoCierre === "Proceso Completo" ? pesoDinamico : 0,
+                pesoSalida: estadoCierre === "Proceso Completo" ? pesoDinamico : 0, 
+                salidaSesionActual: pesoDinamico, // Enviado para suma acumulativa interna
                 estadoFrutas: estadoCierre,
-                pesoParcial: estadoCierre === "Proceso Parcial" ? pesoDinamico : 0,
+                pesoParcial: pesoDinamico,
                 fecha: new Date().toLocaleDateString('es-ES'),
                 start: startTime.toLocaleTimeString('es-ES'),
                 end: endTime.toLocaleTimeString('es-ES'),
@@ -444,7 +445,7 @@
             const estado = document.getElementById('e-estado-cierre').value;
 
             if(!idPed) { alert("Seleccione un lote."); return; }
-            if(!cajasVal || parseInt(cajasVal) <= 0) { alert("Debe escribir un número de cajas válido para guardar."); return; }
+            if(!cajasVal || parseInt(cajasVal) <= 0) { alert("Debe escribir un número de cajas válido."); return; }
 
             const payload = {
                 action: "registroEmpaque",
@@ -466,13 +467,11 @@
             });
         }
 
-        // --- NUEVAS FUNCIONES EXCLUSIVAS DEL MODO GERENTE (LOGÍSTICA DE RESTRICCIONES) ---
-        
+        // --- GESTIÓN EXCLUSIVA GERENTE ---
         function renderGerenteLoteSelect() {
             const select = document.getElementById('g-lote-select');
             select.innerHTML = '<option value="">-- Seleccionar Lote --</option>';
             historialCompleto.forEach(p => {
-                // Mostramos todos los lotes para control administrativo
                 select.innerHTML += `<option value="${p.id}">${p.nombre} [${p.fruta}] (${p.id})</option>`;
             });
         }
@@ -480,10 +479,8 @@
         function gerenteOcultarLoteApp() {
             const idLote = document.getElementById('g-lote-select').value;
             if(!idLote) { alert("Seleccione un lote primero."); return; }
+            document.getElementById('global-status').innerText = "⏳ Ocultando...";
 
-            document.getElementById('global-status').innerText = "⏳ Ocultando de la app...";
-
-            // Ocultar significa forzar que su estado de empaque sea "Completado" en Google Sheets
             const payload = {
                 action: "registroEmpaque",
                 idPedido: idLote,
@@ -498,7 +495,7 @@
                 body: JSON.stringify(payload)
             })
             .then(() => {
-                alert("El lote ahora está archivado. Ya no aparecerá en el flujo activo de la aplicación móvil.");
+                alert("El lote ahora está archivado.");
                 fetchDataFromCloud();
             });
         }
@@ -507,32 +504,22 @@
             const idLote = document.getElementById('g-lote-select').value;
             if(!idLote) { alert("Seleccione un lote primero."); return; }
 
-            // ANUNCIO DE VERIFICACIÓN SOLICITADO
             const confirmacion = confirm("¡Seguro que quieres borrar el registro de este pedido?");
-            
             if (confirmacion) {
-                document.getElementById('global-status').innerText = "⏳ Eliminando de raíz...";
-
-                const payload = {
-                    action: "deleteLote",
-                    idPedido: idLote
-                };
-
+                document.getElementById('global-status').innerText = "⏳ Eliminando...";
                 fetch(GOOGLE_SHEETS_URL, {
                     method: "POST",
                     headers: { "Content-Type": "text/plain;charset=utf-8" },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify({ action: "deleteLote", idPedido: idLote })
                 })
                 .then(() => {
-                    alert("Registro eliminado permanentemente de la Aplicación y de Google Sheets.");
+                    alert("Registro eliminado de raíz.");
                     fetchDataFromCloud();
                 });
-            } else {
-                console.log("Acción de borrado cancelada por el usuario gerente.");
             }
         }
 
-        // --- RENDERS DE COMPONENTES MÓVILES ---
+        // --- RENDERS ---
         function renderFrutasSelect() {
             const select = document.getElementById('f-fruta'); select.innerHTML = '';
             if (!frutasCatalog || frutasCatalog.length === 0) { frutasCatalog = ["Mango", "Fresa", "Piña"]; }
@@ -557,14 +544,14 @@
 
         function renderMobileHistory() {
             const container = document.getElementById('cards-container'); container.innerHTML = "";
-            // CONDICIÓN: Filtrar el historial móvil para que NO aparezcan los lotes completados en empaque
-            const historialFiltradoApp = historialCompleto.filter(item => item.estadoEmpaqueGlobal !== "Completado");
+            // Filtra para ocultar tanto los Completados como los Finalizados automáticos de la vista móvil
+            const filtrado = historialCompleto.filter(i => i.estadoEmpaqueGlobal !== "Completado" && i.estadoEmpaqueGlobal !== "Finalizado");
 
-            if(historialFiltradoApp.length === 0) { 
+            if(filtrado.length === 0) { 
                 container.innerHTML = '<p class="text-xs text-slate-500 text-center py-6">Sin órdenes activas en producción.</p>'; return; 
             }
             
-            [...historialFiltradoApp].reverse().forEach(p => {
+            [...filtrado].reverse().forEach(p => {
                 const card = document.createElement('div');
                 card.className = "bg-slate-800 p-4 rounded-xl border border-slate-700/70 shadow flex flex-col space-y-2 text-xs";
                 card.innerHTML = `
@@ -577,7 +564,7 @@
                         <div>Fruta: <span class="text-slate-200 font-bold">${p.fruta}</span></div>
                         <div>Fecha: ${p.fecha}</div>
                         <div>Entrada: ${p.pesoEntrada} Lb</div>
-                        <div>Salida: ${p.estadoFrutas === 'Proceso Parcial' ? p.pesoParcialFrutas + ' Lb (Hoy)' : p.pesoSalida + ' Lb (Final)'}</div>
+                        <div>Salida Real: ${p.estadoFrutas === 'Proceso Parcial' ? (p.pesoParcialFrutas || 0) + ' Lb (Acumulado)' : p.pesoSalida + ' Lb'}</div>
                     </div>
                 `;
                 container.appendChild(card);
@@ -597,7 +584,8 @@
             const pass = prompt("Contraseña de Gerente:");
             if(pass === GERENTE_PASSWORD) {
                 isAdmin = true;
-                document.getElementById('view-gerente').classList.remove('hidden');
+                document.getElementById('g-box-catalogo').classList.remove('hidden');
+                document.getElementById('g-box-gestion-ordenes').classList.remove('hidden');
                 document.getElementById('btn-export').classList.remove('hidden');
                 document.getElementById('admin-toggle-btn').innerText = "🔒 Bloquear";
                 renderGerenteCatalog();
@@ -607,7 +595,8 @@
 
         function lockAdmin() {
             isAdmin = false;
-            document.getElementById('view-gerente').classList.add('hidden');
+            document.getElementById('g-box-catalogo').classList.add('hidden');
+            document.getElementById('g-box-gestion-ordenes').classList.add('hidden');
             document.getElementById('btn-export').classList.add('hidden');
             document.getElementById('admin-toggle-btn').innerText = "🔑 Modo Gerente";
         }
