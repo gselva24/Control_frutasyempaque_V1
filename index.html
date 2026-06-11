@@ -5,9 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sistema de Control - Planta Frutas</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        /* Estilos CSS especiales para forzar la eliminación de flechas en campos numéricos */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type=number] {
+            -moz-appearance: textfield; /* Para Firefox */
+        }
+    </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen pb-24 font-sans antialiased selection:bg-indigo-500">
 
@@ -88,7 +99,7 @@
 
                     <div>
                         <label id="f-label-peso-in" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Peso Entrada (Lbs):</label>
-                        <input type="number" id="f-peso-in" placeholder="0.00" class="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                        <input type="number" id="f-peso-in" placeholder="0.00" inputmode="decimal" class="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition">
                     </div>
                     
                     <div class="pt-4 text-center bg-slate-900/50 p-4 rounded-xl border border-slate-700/60">
@@ -111,7 +122,7 @@
 
                     <div id="f-wrapper-peso-dinamico">
                         <label id="f-label-dinamico" class="block text-xs font-bold uppercase tracking-wider text-emerald-400 mb-1">Cantidad total que salió de manera final (Lbs):</label>
-                        <input type="number" id="f-peso-dinamico-input" placeholder="0.00" class="w-full px-4 py-3 bg-slate-900 border border-emerald-600 rounded-xl text-sm outline-none transition">
+                        <input type="number" id="f-peso-dinamico-input" placeholder="0.00" inputmode="decimal" class="w-full px-4 py-3 bg-slate-900 border border-emerald-600 rounded-xl text-sm outline-none transition">
                     </div>
 
                     <button onclick="saveLoteFrutas()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-black py-4 rounded-xl text-sm uppercase tracking-wider transition active:scale-95 shadow-lg">
@@ -124,7 +135,7 @@
         <section id="view-empaque" class="app-view hidden space-y-4">
             <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 shadow-xl">
                 <button onclick="switchView('home')" class="text-[10px] text-slate-400 font-bold mb-4 flex items-center gap-1 hover:underline">⬅ Volver al Menú Principal</button>
-                <h2 class="text-lg font-extrabold text-amber-400 mb-1 flex items-center gap-2">📦 2. Área de Empaque</h2>
+                <h2 class="text-lg font-extrabold text-amber-400 mb-1 flex items-center gap-2">📦 2. Area de Empaque</h2>
                 <p class="text-xs text-slate-400 mb-4">Registro y empaquetado final de frutas procesadas.</p>
                 
                 <div class="space-y-4">
@@ -142,7 +153,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Cantidad de Cajas empacadas de este pedido:</label>
-                        <input type="number" id="e-cajas" placeholder="0" class="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 outline-none transition">
+                        <input type="number" id="e-cajas" placeholder="0" inputmode="numeric" class="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 outline-none transition">
                     </div>
                     <button onclick="submitEmpaque()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-black py-4 rounded-xl text-sm uppercase tracking-wider transition active:scale-95 shadow-lg">
                         Finalizar y Guardar Empaque
@@ -192,7 +203,7 @@
     </nav>
 
     <script>
-        // REEMPLAZA ESTA URL CON TU ENLACE DE APLICACIÓN WEB DE APPS SCRIPT (/exec)
+        // COLOCA AQUÍ TU ENLACE GENERADO EN GOOGLE APPS SCRIPT (/exec)
         const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbwoYXQgXwP5ida5biHtFZoeSzFeElLSWhNWQ3zGI3ebOcX2u3fhLALX-VnfCcc0LStc2Q/exec";
         const GERENTE_PASSWORD = "PRODUCCION2026";
 
@@ -283,10 +294,14 @@
             }
         }
 
+        // --- CORRECCIÓN AVANZADA CONTRA SOBREESCRITURAS DE VALOR ---
         function ajustarFormularioCierre() {
             const estado = document.getElementById('f-estado-cierre').value;
             const label = document.getElementById('f-label-dinamico');
             const input = document.getElementById('f-peso-dinamico-input');
+
+            // Salvaguardamos exactamente lo que el operador ya escribió
+            const valorIngresadoPorUsuario = input.value; 
 
             if(estado === "Proceso Parcial") {
                 label.innerText = "Cantidad parcial lograda procesar durante el día (Lbs):";
@@ -297,6 +312,9 @@
                 label.className = "block text-xs font-bold uppercase tracking-wider text-emerald-400 mb-1";
                 input.placeholder = "Ej: 450.00";
             }
+
+            // Devolvemos el valor intacto al campo numérico para que no se altere ni borre
+            input.value = valorIngresadoPorUsuario; 
         }
 
         function startTimer() {
@@ -412,12 +430,10 @@
             });
         }
 
-        // --- RENDER REFORZADO PARA FRUTAS DE PRUEBA ---
         function renderFrutasSelect() {
             const select = document.getElementById('f-fruta');
             select.innerHTML = '';
             
-            // Inyección garantizada si la nube tarda o viene vacía
             if (!frutasCatalog || frutasCatalog.length === 0) { 
                 frutasCatalog = ["Mango", "Fresa", "Piña", "Fruta de Muestra"]; 
             }
@@ -444,7 +460,7 @@
             select.innerHTML = '<option value="">-- Seleccionar Lote Pendiente --</option>';
             
             if (!pedidosPendientes || pedidosPendientes.length === 0) {
-                select.innerHTML += '<option value="LOTE-LOCAL">Lote Muestra (Proc: 10/06/2026)</option>';
+                select.innerHTML += '<option value="LOTE-LOCAL">Lote Muestra (Proc: 11/06/2026)</option>';
                 return;
             }
             
