@@ -9,14 +9,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        /* Estilos CSS especiales para forzar la eliminación de flechas en campos numéricos */
+        /* Deshabilitar flechas de incremento en inputs numéricos */
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { 
             -webkit-appearance: none; 
             margin: 0; 
         }
         input[type=number] {
-            -moz-appearance: textfield; /* Para Firefox */
+            -moz-appearance: textfield;
         }
     </style>
 </head>
@@ -81,25 +81,25 @@
                 <div id="f-step-1" class="space-y-3">
                     <div id="f-container-retomar" class="hidden">
                         <label class="block text-xs font-bold uppercase tracking-wider text-amber-400 mb-1">Seleccionar Pedido Parcial a Continuar:</label>
-                        <select id="f-pedido-parcial-select" onchange="autoFillRetomado()" class="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-xl text-sm outline-none transition text-amber-200 font-medium">
+                        <select id="f-pedido-parcial-select" onchange="autoFillRetomado()" class="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-xl text-sm outline-none text-amber-200 font-medium">
                             </select>
                     </div>
 
                     <div id="f-grupo-manual-inputs" class="space-y-3">
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Colocar nombre de pedido:</label>
-                            <input type="text" id="f-nombre" placeholder="Pedido de..." class="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                            <input type="text" id="f-nombre" placeholder="Pedido de..." class="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-xl text-sm outline-none">
                         </div>
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Tipo de fruto:</label>
-                            <select id="f-fruta" class="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition text-slate-300">
+                            <select id="f-fruta" class="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-xl text-sm outline-none text-slate-300">
                                 </select>
                         </div>
                     </div>
 
                     <div>
                         <label id="f-label-peso-in" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Peso Entrada (Lbs):</label>
-                        <input type="number" id="f-peso-in" placeholder="0.00" inputmode="decimal" class="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                        <input type="number" id="f-peso-in" placeholder="0.00" inputmode="decimal" class="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-xl text-sm outline-none transition">
                     </div>
                     
                     <div class="pt-4 text-center bg-slate-900/50 p-4 rounded-xl border border-slate-700/60">
@@ -135,13 +135,13 @@
         <section id="view-empaque" class="app-view hidden space-y-4">
             <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 shadow-xl">
                 <button onclick="switchView('home')" class="text-[10px] text-slate-400 font-bold mb-4 flex items-center gap-1 hover:underline">⬅ Volver al Menú Principal</button>
-                <h2 class="text-lg font-extrabold text-amber-400 mb-1 flex items-center gap-2">📦 2. Area de Empaque</h2>
+                <h2 class="text-lg font-extrabold text-amber-400 mb-1 flex items-center gap-2">📦 2. Área de Empaque</h2>
                 <p class="text-xs text-slate-400 mb-4">Registro y empaquetado final de frutas procesadas.</p>
                 
                 <div class="space-y-4">
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Seleccionar Pedido Procesado (Con Fecha de Proceso):</label>
-                        <select id="e-pedido-select" class="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 outline-none transition text-amber-200 font-medium">
+                        <select id="e-pedido-select" class="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-xl text-sm outline-none text-amber-200 font-medium">
                             </select>
                     </div>
                     <div>
@@ -153,7 +153,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Cantidad de Cajas empacadas de este pedido:</label>
-                        <input type="number" id="e-cajas" placeholder="0" inputmode="numeric" class="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 outline-none transition">
+                        <input type="number" id="e-cajas" placeholder="0" inputmode="numeric" class="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-xl text-sm outline-none transition">
                     </div>
                     <button onclick="submitEmpaque()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-black py-4 rounded-xl text-sm uppercase tracking-wider transition active:scale-95 shadow-lg">
                         Finalizar y Guardar Empaque
@@ -175,16 +175,41 @@
         </section>
 
         <section id="view-gerente" class="hidden space-y-4">
-            <div class="bg-slate-800 p-5 rounded-2xl border border-amber-500/40 shadow-xl">
-                <div class="flex justify-between items-center mb-3">
-                    <h3 class="text-sm font-black text-amber-400 uppercase tracking-widest">⚙️ Catálogo de Frutas (Administrador)</h3>
-                    <button onclick="lockAdmin()" class="text-xs text-rose-400 font-bold underline">Salir de Modo Gerente</button>
+            <div class="bg-slate-800 p-5 rounded-2xl border border-amber-500/40 shadow-xl space-y-6">
+                
+                <div>
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-sm font-black text-amber-400 uppercase tracking-widest">⚙️ Catálogo de Frutas (Administrador)</h3>
+                        <button onclick="lockAdmin()" class="text-xs text-rose-400 font-bold underline">Salir de Modo Gerente</button>
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="text" id="new-fruta-input" placeholder="Nueva fruta" class="flex-1 px-4 py-2.5 bg-slate-900 border border-slate-600 rounded-xl text-xs outline-none">
+                        <button onclick="addFrutaCatalog()" class="bg-amber-500 text-slate-900 font-bold px-4 rounded-xl text-xs transition active:scale-95">Añadir</button>
+                    </div>
+                    <ul id="catalog-list" class="space-y-1.5 max-h-36 overflow-y-auto mt-3 pr-1"></ul>
                 </div>
-                <div class="flex gap-2">
-                    <input type="text" id="new-fruta-input" placeholder="Nueva fruta" class="flex-1 px-4 py-2.5 bg-slate-900 border border-slate-600 rounded-xl text-xs outline-none">
-                    <button onclick="addFrutaCatalog()" class="bg-amber-500 text-slate-900 font-bold px-4 rounded-xl text-xs transition active:scale-95">Añadir</button>
+
+                <div class="border-t border-slate-700 pt-4">
+                    <h3 class="text-sm font-black text-rose-400 uppercase tracking-widest mb-2">🗑️ Gestión y Limpieza de Ordenes</h3>
+                    <p class="text-[11px] text-slate-400 mb-3">Utilice este panel para ocultar lotes del flujo móvil o eliminarlos de raíz.</p>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Seleccionar Lote de la Planta:</label>
+                            <select id="g-lote-select" class="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-xl text-xs outline-none text-amber-200">
+                                </select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 pt-1">
+                            <button onclick="gerenteOcultarLoteApp()" class="bg-slate-700 hover:bg-slate-600 text-white text-[11px] font-bold py-2.5 px-2 rounded-xl border border-slate-500 transition active:scale-95">
+                                Ocultar de la App
+                            </button>
+                            <button onclick="gerenteBorrarLoteTotal()" class="bg-rose-600 hover:bg-rose-500 text-white text-[11px] font-black py-2.5 px-2 rounded-xl transition active:scale-95 shadow-md uppercase">
+                                Borrar del Todo ✕
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <ul id="catalog-list" class="space-y-1.5 max-h-36 overflow-y-auto mt-3 pr-1"></ul>
+
             </div>
         </section>
 
@@ -203,7 +228,6 @@
     </nav>
 
     <script>
-        // COLOCA AQUÍ TU ENLACE GENERADO EN GOOGLE APPS SCRIPT (/exec)
         const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbwoYXQgXwP5ida5biHtFZoeSzFeElLSWhNWQ3zGI3ebOcX2u3fhLALX-VnfCcc0LStc2Q/exec";
         const GERENTE_PASSWORD = "PRODUCCION2026";
 
@@ -240,16 +264,18 @@
                     renderEmpaqueSelect();
                     renderMobileHistory();
                     renderGerenteCatalog();
+                    renderGerenteLoteSelect(); // Actualiza selector administrador
                     
                     document.getElementById('global-status').innerText = "✅ Sincronizado";
                     document.getElementById('global-status').className = "text-[10px] text-emerald-400 font-medium italic";
                 })
                 .catch(err => {
-                    console.error("Modo seguro local activado:", err);
+                    console.error("Modo seguro:", err);
                     renderFrutasSelect();
                     renderParcialesSelect();
                     renderEmpaqueSelect();
                     renderMobileHistory();
+                    renderGerenteLoteSelect();
                 });
         }
 
@@ -258,6 +284,7 @@
             document.getElementById(`view-${viewName}`).classList.remove('hidden');
         }
 
+        // --- PROTECCIÓN CRUCIAL: MANTENER INTACTOS VALORES DE INPUTS CONTRA CAMBIOS ---
         function setFrutasMode(mode) {
             isRetomadoMode = mode;
             const newBtn = document.getElementById('mode-new-btn');
@@ -265,6 +292,9 @@
             const manualInputs = document.getElementById('f-grupo-manual-inputs');
             const retomarContainer = document.getElementById('f-container-retomar');
             const labelPesoIn = document.getElementById('f-label-peso-in');
+            
+            // Almacenamos el peso que ya digitó para que no se altere
+            const currentPesoIn = document.getElementById('f-peso-in').value;
 
             if(mode) {
                 resumeBtn.className = "flex-1 py-2 rounded-lg font-bold bg-indigo-600 text-white transition";
@@ -278,30 +308,36 @@
                 manualInputs.classList.remove('hidden');
                 retomarContainer.classList.add('hidden');
                 labelPesoIn.innerText = "Peso Entrada (Lbs):";
-                
-                document.getElementById('f-nombre').value = "";
-                document.getElementById('f-peso-in').value = "";
             }
+            
+            // Devolvemos el valor exacto del operador sin mutaciones
+            document.getElementById('f-peso-in').value = currentPesoIn;
         }
 
         function autoFillRetomado() {
             const select = document.getElementById('f-pedido-parcial-select');
             if(!select.value) return;
             const lote = pedidosParciales.find(p => p.id === select.value);
+            
+            // Guardamos el peso de entrada antes del autollenado de textos
+            const userPesoIn = document.getElementById('f-peso-in').value;
+            
             if(lote) {
                 document.getElementById('f-nombre').value = lote.nombre;
                 document.getElementById('f-fruta').value = lote.fruta;
             }
+            
+            // Devolvemos el valor intacto
+            document.getElementById('f-peso-in').value = userPesoIn;
         }
 
-        // --- CORRECCIÓN AVANZADA CONTRA SOBREESCRITURAS DE VALOR ---
         function ajustarFormularioCierre() {
             const estado = document.getElementById('f-estado-cierre').value;
             const label = document.getElementById('f-label-dinamico');
             const input = document.getElementById('f-peso-dinamico-input');
 
-            // Salvaguardamos exactamente lo que el operador ya escribió
-            const valorIngresadoPorUsuario = input.value; 
+            // Salvaguarda absoluta de lo que digitó el operador
+            const valorOriginalUsuario = input.value; 
 
             if(estado === "Proceso Parcial") {
                 label.innerText = "Cantidad parcial lograda procesar durante el día (Lbs):";
@@ -313,8 +349,8 @@
                 input.placeholder = "Ej: 450.00";
             }
 
-            // Devolvemos el valor intacto al campo numérico para que no se altere ni borre
-            input.value = valorIngresadoPorUsuario; 
+            // Inyección forzada del mismo valor original
+            input.value = valorOriginalUsuario; 
         }
 
         function startTimer() {
@@ -326,8 +362,8 @@
                 alert("Debe colocar un nombre de pedido.");
                 return;
             }
-            if (!document.getElementById('f-peso-in').value) {
-                alert("Debe ingresar el peso inicial asignado a este turno.");
+            if (!document.getElementById('f-peso-in').value || parseFloat(document.getElementById('f-peso-in').value) <= 0) {
+                alert("Debe escribir un número de peso de entrada válido para registrar.");
                 return;
             }
 
@@ -365,7 +401,7 @@
         function saveLoteFrutas() {
             const pesoDinamico = document.getElementById('f-peso-dinamico-input').value;
             if(!pesoDinamico || parseFloat(pesoDinamico) <= 0) { 
-                alert("Ingrese el valor de peso correspondiente para el cierre."); 
+                alert("Debe escribir un número válido en la casilla de salida para registrar el proceso."); 
                 return; 
             }
 
@@ -408,7 +444,7 @@
             const estado = document.getElementById('e-estado-cierre').value;
 
             if(!idPed) { alert("Seleccione un lote."); return; }
-            if(!cajasVal || parseInt(cajasVal) <= 0) { alert("Ingrese cantidad de cajas."); return; }
+            if(!cajasVal || parseInt(cajasVal) <= 0) { alert("Debe escribir un número de cajas válido para guardar."); return; }
 
             const payload = {
                 action: "registroEmpaque",
@@ -430,26 +466,82 @@
             });
         }
 
-        function renderFrutasSelect() {
-            const select = document.getElementById('f-fruta');
-            select.innerHTML = '';
-            
-            if (!frutasCatalog || frutasCatalog.length === 0) { 
-                frutasCatalog = ["Mango", "Fresa", "Piña", "Fruta de Muestra"]; 
-            }
-            
-            frutasCatalog.forEach(f => { 
-                select.innerHTML += `<option value="${f}">${f}</option>`; 
+        // --- NUEVAS FUNCIONES EXCLUSIVAS DEL MODO GERENTE (LOGÍSTICA DE RESTRICCIONES) ---
+        
+        function renderGerenteLoteSelect() {
+            const select = document.getElementById('g-lote-select');
+            select.innerHTML = '<option value="">-- Seleccionar Lote --</option>';
+            historialCompleto.forEach(p => {
+                // Mostramos todos los lotes para control administrativo
+                select.innerHTML += `<option value="${p.id}">${p.nombre} [${p.fruta}] (${p.id})</option>`;
             });
+        }
+
+        function gerenteOcultarLoteApp() {
+            const idLote = document.getElementById('g-lote-select').value;
+            if(!idLote) { alert("Seleccione un lote primero."); return; }
+
+            document.getElementById('global-status').innerText = "⏳ Ocultando de la app...";
+
+            // Ocultar significa forzar que su estado de empaque sea "Completado" en Google Sheets
+            const payload = {
+                action: "registroEmpaque",
+                idPedido: idLote,
+                fechaEmpaque: new Date().toLocaleDateString('es-ES'),
+                cajas: 0,
+                estadoEmpaque: "Completado"
+            };
+
+            fetch(GOOGLE_SHEETS_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify(payload)
+            })
+            .then(() => {
+                alert("El lote ahora está archivado. Ya no aparecerá en el flujo activo de la aplicación móvil.");
+                fetchDataFromCloud();
+            });
+        }
+
+        function gerenteBorrarLoteTotal() {
+            const idLote = document.getElementById('g-lote-select').value;
+            if(!idLote) { alert("Seleccione un lote primero."); return; }
+
+            // ANUNCIO DE VERIFICACIÓN SOLICITADO
+            const confirmacion = confirm("¡Seguro que quieres borrar el registro de este pedido?");
+            
+            if (confirmacion) {
+                document.getElementById('global-status').innerText = "⏳ Eliminando de raíz...";
+
+                const payload = {
+                    action: "deleteLote",
+                    idPedido: idLote
+                };
+
+                fetch(GOOGLE_SHEETS_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify(payload)
+                })
+                .then(() => {
+                    alert("Registro eliminado permanentemente de la Aplicación y de Google Sheets.");
+                    fetchDataFromCloud();
+                });
+            } else {
+                console.log("Acción de borrado cancelada por el usuario gerente.");
+            }
+        }
+
+        // --- RENDERS DE COMPONENTES MÓVILES ---
+        function renderFrutasSelect() {
+            const select = document.getElementById('f-fruta'); select.innerHTML = '';
+            if (!frutasCatalog || frutasCatalog.length === 0) { frutasCatalog = ["Mango", "Fresa", "Piña"]; }
+            frutasCatalog.forEach(f => { select.innerHTML += `<option value="${f}">${f}</option>`; });
         }
 
         function renderParcialesSelect() {
             const select = document.getElementById('f-pedido-parcial-select');
             select.innerHTML = '<option value="">-- Seleccione Pedido Parcial --</option>';
-            if(!pedidosParciales || pedidosParciales.length === 0) {
-                select.innerHTML += '<option value="PROB-001">Ejemplo: Lote Abierto (Mango)</option>';
-                return;
-            }
             pedidosParciales.forEach(p => {
                 select.innerHTML += `<option value="${p.id}">Lote: ${p.nombre} [F. Inicial: ${p.fecha}]</option>`;
             });
@@ -458,24 +550,21 @@
         function renderEmpaqueSelect() {
             const select = document.getElementById('e-pedido-select');
             select.innerHTML = '<option value="">-- Seleccionar Lote Pendiente --</option>';
-            
-            if (!pedidosPendientes || pedidosPendientes.length === 0) {
-                select.innerHTML += '<option value="LOTE-LOCAL">Lote Muestra (Proc: 11/06/2026)</option>';
-                return;
-            }
-            
             pedidosPendientes.forEach(p => { 
                 select.innerHTML += `<option value="${p.id}">${p.nombre} (${p.fruta}) - Proc: ${p.fecha}</option>`; 
             });
         }
 
         function renderMobileHistory() {
-            const container = document.getElementById('cards-container');
-            container.innerHTML = "";
-            if(!historialCompleto || historialCompleto.length === 0) { 
-                container.innerHTML = '<p class="text-xs text-slate-500 text-center py-6">Sin registros en el historial.</p>'; return; 
+            const container = document.getElementById('cards-container'); container.innerHTML = "";
+            // CONDICIÓN: Filtrar el historial móvil para que NO aparezcan los lotes completados en empaque
+            const historialFiltradoApp = historialCompleto.filter(item => item.estadoEmpaqueGlobal !== "Completado");
+
+            if(historialFiltradoApp.length === 0) { 
+                container.innerHTML = '<p class="text-xs text-slate-500 text-center py-6">Sin órdenes activas en producción.</p>'; return; 
             }
-            [...historialCompleto].reverse().forEach(p => {
+            
+            [...historialFiltradoApp].reverse().forEach(p => {
                 const card = document.createElement('div');
                 card.className = "bg-slate-800 p-4 rounded-xl border border-slate-700/70 shadow flex flex-col space-y-2 text-xs";
                 card.innerHTML = `
@@ -512,6 +601,7 @@
                 document.getElementById('btn-export').classList.remove('hidden');
                 document.getElementById('admin-toggle-btn').innerText = "🔒 Bloquear";
                 renderGerenteCatalog();
+                renderGerenteLoteSelect();
             } else if(pass !== null) { alert("Contraseña incorrecta."); }
         }
 
